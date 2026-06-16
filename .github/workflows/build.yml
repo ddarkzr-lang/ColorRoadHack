@@ -7,28 +7,26 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: macos-13
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y fakeroot build-essential git perl libstorable-perl clang-14 lld-14
-
     - name: Setup Theos
+      uses: asdf-community/asdf-theos@v1
+      continue-on-error: true
+
+    - name: Alternative Theos Setup
       run: |
-        git clone --recursive https://github.com/theos/theos.git $HOME/theos
+        if [ ! -d "$HOME/theos" ]; then
+          git clone --recursive https://github.com/theos/theos.git $HOME/theos
+        fi
         echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
-    - name: Download iOS SDK if needed
+    - name: Download iOS SDK
       run: |
-        if [ ! -d "$HOME/theos/sdks/iPhoneOS14.5.sdk" ]; then
-          git clone https://github.com/theos/sdks.git $HOME/theos/sdks_new
-          mv $HOME/theos/sdks_new/* $HOME/theos/sdks/ || true
-        fi
+        git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
     - name: Compile Tweak
       run: |
@@ -39,4 +37,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ColorRoadModMenu-Dylib
-        path: .theos/obj/*.dylib
+        path: |
+          .theos/obj/*.dylib
+          packages/*.deb

@@ -25,5 +25,6 @@ jobs:
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
+        # تنظيف المجلد قبل التجميع لتفادي أي أخطاء سابقة
         make clean
         make package FINALPACKAGE=1

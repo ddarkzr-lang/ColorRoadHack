@@ -1,0 +1,8 @@
+Package: com.yourname.colorroadmenu
+Name: ColorRoadModMenu
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Color Road Mod Menu from scratch
+Maintainer: Developer
+

@@ -7,29 +7,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
-
-    - name: Install System Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential perl git clang libssl-dev
 
     - name: Setup Official Theos
       run: |
         git clone --recursive https://github.com/theos/theos.git $HOME/theos
         echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
-    - name: Download iOS SDK Cleanly
+    - name: Download iOS SDK
       run: |
-        # تحميل الـ SDKs في مجلد مؤقت ثم نقل محتوياتها للمكان الصحيح مباشرة
-        git clone https://github.com/theos/sdks.git $HOME/theos/sdks_temp
-        mkdir -p $HOME/theos/sdks
-        mv $HOME/theos/sdks_temp/* $HOME/theos/sdks/ || true
-        rm -rf $HOME/theos/sdks_temp
+        git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
     - name: Compile Dylib File
       run: |

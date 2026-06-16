@@ -22,40 +22,17 @@ jobs:
       run: |
         git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
-    - name: Rebuild Project Structure Cleanly
+    - name: Fix Theos Workspace Layout
       run: |
-        # أخذ الكود الفعلي من ملفاتك الحالية وتخزينه مؤقتاً لتفادي أي مشاكل ترميز
-        cat Tweak.x > tweak_actual.x 2>/dev/null || cat tweak.x > tweak_actual.x 2>/dev/null
-        cat Menu.mm > menu_actual.mm 2>/dev/null || cat menu.mm > menu_actual.mm 2>/dev/null
-        
-        # تنظيف كامل للمجلد من أي ملفات ذات أسماء معطوبة أو مسافات مخفية
-        rm -f Makefile Tweak.x tweak.x Menu.mm menu.mm control
-        
-        # إنشاء ملف control نظيف تماماً
-        echo "Package: com.yourcompany.colorroadhack" > control
-        echo "Name: ColorRoadModMenu" >> control
-        echo "Depends: mobilesubstrate" >> control
-        echo "Version: 0.0.1" >> control
-        echo "Architecture: iphoneos-arm" >> control
-        echo "Description: Color Road Mod Menu" >> control
-        echo "Maintainer: ddarkzr-lang" >> control
-        echo "Author: ddarkzr-lang" >> control
-
-        # إنشاء ملف Makefile جديد ونظيف 100% بحروف صغيرة لتطابق الملفات
-        echo "TARGET := iphone:clang:latest:15.0" > Makefile
-        echo "ARCHS := arm64 arm64e" >> Makefile
-        echo "include \$(THEOS)/makefiles/common.mk" >> Makefile
-        echo "TWEAK_NAME := ColorRoadModMenu" >> Makefile
-        echo "ColorRoadModMenu_FILES := tweak.x menu.mm" >> Makefile
-        echo "ColorRoadModMenu_CFLAGS := -fobjc-arc" >> Makefile
-        echo "include \$(THEOS)/makefiles/tweak.mk" >> Makefile
-
-        # إعادة تسمية ملفات الأكواد بأسماء صغيرة متوافقة تماماً وبدون مسافات
-        mv tweak_actual.x ./tweak.x
-        mv menu_actual.mm ./menu.mm
+        cp Tweak.x tweak.x || true
+        cp Menu.mm menu.mm || true
+        mkdir -p .theos/_/
+        cp Tweak.x .theos/_/ 2>/dev/null || true
+        cp Menu.mm .theos/_/ 2>/dev/null || true
+        cp tweak.x .theos/_/ 2>/dev/null || true
+        cp menu.mm .theos/_/ 2>/dev/null || true
 
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
-        make clean
         make package FINALPACKAGE=1

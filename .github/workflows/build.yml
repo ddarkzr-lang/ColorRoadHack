@@ -25,4 +25,5 @@ jobs:
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
-        make package FINALPACKAGE=1
+        # إجبار التجميع على قراءة المجلد الحالي كمسار رئيسي للمشروع
+        make package FINALPACKAGE=1 THEOS_PROJECT_DIR=$(pwd)

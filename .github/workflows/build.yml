@@ -22,9 +22,19 @@ jobs:
       run: |
         git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
-    - name: Inject Files Directly Into Workspace
+    - name: Absolute Fix Paths
       run: |
-        # دمج وتصحيح محاذاة ملف الـ Makefile وإلغاء أي مسافات مخفية
+        # إنشاء مجلد مؤقت لنقل الملفات وتغيير أسمائها غصب عن نظام الماك
+        mkdir temp_folder
+        mv Tweak.x temp_folder/tweak.x || mv tweak.x temp_folder/tweak.x || true
+        mv Menu.mm temp_folder/menu.mm || mv menu.mm temp_folder/menu.mm || true
+        
+        # إعادة الملفات للمسار الرئيسي بأسماء صغيرة تماماً
+        mv temp_folder/tweak.x ./tweak.x
+        mv temp_folder/menu.mm ./menu.mm
+        rm -rf temp_folder
+
+        # إعادة كتابة الـ Makefile بدقة متناهية بحروف صغيرة
         echo "TARGET := iphone:clang:latest:15.0" > Makefile
         echo "ARCHS := arm64 arm64e" >> Makefile
         echo "include \$(THEOS)/makefiles/common.mk" >> Makefile
@@ -32,10 +42,6 @@ jobs:
         echo "ColorRoadModMenu_FILES := tweak.x menu.mm" >> Makefile
         echo "ColorRoadModMenu_CFLAGS := -fobjc-arc" >> Makefile
         echo "include \$(THEOS)/makefiles/tweak.mk" >> Makefile
-
-        # نسخ الكود الفعلي لملفات بأسماء صغيرة لتتطابق مع الـ Makefile الجديد غصب عن النظام
-        cp Tweak.x tweak.x 2>/dev/null || true
-        cp Menu.mm menu.mm 2>/dev/null || true
 
     - name: Compile Dylib File
       run: |

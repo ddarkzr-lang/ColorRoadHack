@@ -16,18 +16,18 @@ jobs:
     - name: Install System Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y fakeroot build-essential git perl libstorable-perl clang lld
+        sudo apt-get install -y fakeroot build-essential git perl libstorable-perl clang lld wget
 
     - name: Clone Theos Official Repository
       run: |
         git clone --recursive https://github.com/theos/theos.git $HOME/theos
         echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
-    - name: Setup Linus Toolchain
+    - name: Setup Linux Toolchain
       run: |
         mkdir -p $HOME/theos/toolchain
-        # تنزيل المترجم الرسمي مباشرة من مستودع ثقة ومستقر
-        wget https://github.com/kabiroberai/theos-toolchain-linux/releases/download/v1.1.0/toolchain-linux-arm64.tar.gz
+        # تحميل الـ Toolchain الرسمية والمستقرة مباشرة
+        wget https://github.com/Samgisanity/theos-toolchain-linux/releases/download/v1.0.0/toolchain-linux-arm64.tar.gz
         tar -xf toolchain-linux-arm64.tar.gz -C $HOME/theos/toolchain/
 
     - name: Download iOS SDK

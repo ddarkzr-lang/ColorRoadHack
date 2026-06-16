@@ -1,13 +1,12 @@
-TARGET := iphone:clang:latest:14.0
-ARCHS := arm64
+TARGET := iphone:clang:latest:15.0
+ARCHS := arm64 arm64e
 
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME := ColorRoadModMenu
 
+# تأكد أن الأسماء هنا تطابق ملفاتك بالحرف
 ColorRoadModMenu_FILES := Tweak.x Menu.mm
-ColorRoadModMenu_FRAMEWORKS := UIKit QuartzCore
 ColorRoadModMenu_CFLAGS := -fobjc-arc
 
 include $(THEOS)/makefiles/tweak.mk
-

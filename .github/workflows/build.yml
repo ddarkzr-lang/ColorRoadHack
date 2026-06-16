@@ -2,7 +2,7 @@ name: Build iOS Dylib
 
 on:
   push:
-    branches: [ "*" ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -12,8 +12,6 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0 # سحب كل الفروع والملفات والتاريخ بالكامل لضمان عدم نقص أي ملف
 
     - name: Setup Official Theos
       run: |
@@ -24,24 +22,17 @@ jobs:
       run: |
         git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
-    - name: Super Find and Fix Paths
+    - name: Fix Case Sensitivity
       run: |
-        echo "=== جاري البحث عن ملفاتك في كل مكان ==="
-        # أمر سحري يبحث عن الملفات وينسخها للمسار الرئيسي لو كانت ضائعة في مجلدات فرعية
-        find . -name "*Tweak.x*" -exec cp {} . \; || true
-        find . -name "*Makefile*" -exec cp {} . \; || true
-        find . -name "*control*" -exec cp {} . \; || true
-        find . -name "*Menu.mm*" -exec cp {} . \; || true
-        
-        # التأكد من الأسماء الصحيحة بدقة
-        mv *tweak.x Tweak.x 2>/dev/null || true
-        mv *makefile Makefile 2>/dev/null || true
-        mv *menu.mm Menu.mm 2>/dev/null || true
+        # نجعل هناك نسخة احتياطية بحروف صغيرة بالكامل ليرضاها نظام تجميع الماك
+        cp Tweak.x tweak.x || true
+        cp Menu.mm menu.mm || true
 
-    - name: Force Compile
+    - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
-        make package FINALPACKAGE=1
+        make clean
+        make package FINALPACKAGE=1 SHARED_LIBRARY=1
 
     - name: Upload Finished Dylib
       uses: actions/upload-artifact@v4

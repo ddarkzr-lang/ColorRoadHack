@@ -22,17 +22,8 @@ jobs:
       run: |
         git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
-    - name: Fix Theos Workspace Layout
-      run: |
-        cp Tweak.x tweak.x || true
-        cp Menu.mm menu.mm || true
-        mkdir -p .theos/_/
-        cp Tweak.x .theos/_/ 2>/dev/null || true
-        cp Menu.mm .theos/_/ 2>/dev/null || true
-        cp tweak.x .theos/_/ 2>/dev/null || true
-        cp menu.mm .theos/_/ 2>/dev/null || true
-
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
+        make clean
         make package FINALPACKAGE=1

@@ -23,11 +23,16 @@ jobs:
         git clone --recursive https://github.com/theos/theos.git $HOME/theos
         echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
-    - name: Download iOS SDK
+    - name: Download iOS SDK Cleanly
       run: |
-        git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
+        # تحميل الـ SDKs في مجلد مؤقت ثم نقل محتوياتها للمكان الصحيح مباشرة
+        git clone https://github.com/theos/sdks.git $HOME/theos/sdks_temp
+        mkdir -p $HOME/theos/sdks
+        mv $HOME/theos/sdks_temp/* $HOME/theos/sdks/ || true
+        rm -rf $HOME/theos/sdks_temp
 
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
+        make clean
         make package FINALPACKAGE=1

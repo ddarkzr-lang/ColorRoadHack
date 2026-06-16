@@ -22,21 +22,7 @@ jobs:
       run: |
         git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
-    - name: Fix Case Sensitivity
-      run: |
-        # نجعل هناك نسخة احتياطية بحروف صغيرة بالكامل ليرضاها نظام تجميع الماك
-        cp Tweak.x tweak.x || true
-        cp Menu.mm menu.mm || true
-
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
-        make clean
-        make package FINALPACKAGE=1 SHARED_LIBRARY=1
-
-    - name: Upload Finished Dylib
-      uses: actions/upload-artifact@v4
-      with:
-        name: ColorRoadModMenu-Dylib
-        path: |
-          .theos/obj/*.dylib
+        make package FINALPACKAGE=1

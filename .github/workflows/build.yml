@@ -7,21 +7,23 @@ on:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Setup Theos
-      uses: asdf-community/asdf-theos@v1
-      continue-on-error: true
-
-    - name: Alternative Theos Setup
+    - name: Install Dependencies
       run: |
-        if [ ! -d "$HOME/theos" ]; then
-          git clone --recursive https://github.com/theos/theos.git $HOME/theos
-        fi
+        sudo apt-get update
+        sudo apt-get install -y fakeroot build-essential git perl libstorable-perl clang lld
+
+    - name: Setup Theos & Toolchain
+      run: |
+        git clone --recursive https://github.com/theos/theos.git $HOME/theos
+        # تحميل المترجم المخصص للينكس تلقائياً لتفادي خطأ No such file or directory
+        curl -LO https://github.com/theos/toolchain/releases/download/linux-arm64/toolchain-linux-arm64.tar.gz
+        tar -xf toolchain-linux-arm64.tar.gz -C $HOME/theos/toolchain/
         echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
     - name: Download iOS SDK

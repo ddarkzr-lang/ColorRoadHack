@@ -7,32 +7,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: macos-latest
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y fakeroot build-essential git perl libstorable-perl clang lld
-
-    - name: Setup Theos & Toolchain
-      run: |
-        git clone --recursive https://github.com/theos/theos.git $HOME/theos
-        # تحميل المترجم المخصص للينكس تلقائياً لتفادي خطأ No such file or directory
-        curl -LO https://github.com/theos/toolchain/releases/download/linux-arm64/toolchain-linux-arm64.tar.gz
-        tar -xf toolchain-linux-arm64.tar.gz -C $HOME/theos/toolchain/
-        echo "THEOS=$HOME/theos" >> $GITHUB_ENV
-
-    - name: Download iOS SDK
-      run: |
-        git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
+    - name: Setup Theos Environment
+      uses: theos/setup-theos-action@v1
 
     - name: Compile Tweak
       run: |
-        export THEOS=$HOME/theos
         make package FINALPACKAGE=1
 
     - name: Upload Resulting Dylib

@@ -22,24 +22,7 @@ jobs:
       run: |
         git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
-    - name: Standardize Layout Everywhere
-      run: |
-        # إنشاء ملفات الكود والـ Makefile في المجلد الرئيسي
-        echo "TARGET := iphone:clang:latest:15.0" > Makefile
-        echo "ARCHS := arm64 arm64e" >> Makefile
-        echo "include \$(THEOS)/makefiles/common.mk" >> Makefile
-        echo "TWEAK_NAME := ColorRoadModMenu" >> Makefile
-        echo "ColorRoadModMenu_FILES := tweak.x menu.mm" >> Makefile
-        echo "ColorRoadModMenu_CFLAGS := -fobjc-arc" >> Makefile
-        echo "include \$(THEOS)/makefiles/tweak.mk" >> Makefile
-
-        # نسخ نفس الملفات إلى أي مجلد فرعي محتمل لضمان رؤيتها
-        mkdir -p ColorRoadModMenu src
-        cp Makefile tweak.x menu.mm ColorRoadModMenu/ 2>/dev/null || true
-        cp Makefile tweak.x menu.mm src/ 2>/dev/null || true
-
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
-        make clean
         make package FINALPACKAGE=1

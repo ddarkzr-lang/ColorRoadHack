@@ -22,6 +22,17 @@ jobs:
       run: |
         git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
+    - name: Standardize Makefile Separators
+      run: |
+        # إعادة كتابة ملف Makefile نظيف بالكامل ومضمون بدون مسافات معطوبة
+        echo "TARGET := iphone:clang:latest:15.0" > Makefile
+        echo "ARCHS := arm64 arm64e" >> Makefile
+        echo "include \$(THEOS)/makefiles/common.mk" >> Makefile
+        echo "TWEAK_NAME := ColorRoadModMenu" >> Makefile
+        echo "ColorRoadModMenu_FILES := tweak.x menu.mm" >> Makefile
+        echo "ColorRoadModMenu_CFLAGS := -fobjc-arc" >> Makefile
+        echo "include \$(THEOS)/makefiles/tweak.mk" >> Makefile
+
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos

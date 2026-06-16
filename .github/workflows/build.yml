@@ -22,6 +22,17 @@ jobs:
       run: |
         git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
+    - name: Debug Files & Fix Paths
+      run: |
+        echo "=== طباعة جميع الملفات الموجودة في المستودع حالياً ==="
+        ls -R
+        
+        # البحث عن ملف tweak وإصلاح اسمه تلقائياً لو كان بحروف صغيرة أو داخل مجلد فرعي
+        find . -iname "tweak.x" -exec mv {} ./Tweak.x \;
+        find . -iname "makefile" -exec mv {} ./Makefile \;
+        find . -iname "control" -exec mv {} ./control \;
+        find . -iname "menu.mm" -exec mv {} ./Menu.mm \;
+
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos

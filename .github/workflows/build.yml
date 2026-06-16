@@ -25,4 +25,6 @@ jobs:
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
+        # الدخول للمسار الفعلي للمستودع مجدداً للتأكد من وجود الملفات والتجميع
+        cd $GITHUB_WORKSPACE
         make package FINALPACKAGE=1

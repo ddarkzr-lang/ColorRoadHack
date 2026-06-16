@@ -22,9 +22,23 @@ jobs:
       run: |
         git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
+    - name: Inject Files Directly Into Workspace
+      run: |
+        # دمج وتصحيح محاذاة ملف الـ Makefile وإلغاء أي مسافات مخفية
+        echo "TARGET := iphone:clang:latest:15.0" > Makefile
+        echo "ARCHS := arm64 arm64e" >> Makefile
+        echo "include \$(THEOS)/makefiles/common.mk" >> Makefile
+        echo "TWEAK_NAME := ColorRoadModMenu" >> Makefile
+        echo "ColorRoadModMenu_FILES := tweak.x menu.mm" >> Makefile
+        echo "ColorRoadModMenu_CFLAGS := -fobjc-arc" >> Makefile
+        echo "include \$(THEOS)/makefiles/tweak.mk" >> Makefile
+
+        # نسخ الكود الفعلي لملفات بأسماء صغيرة لتتطابق مع الـ Makefile الجديد غصب عن النظام
+        cp Tweak.x tweak.x 2>/dev/null || true
+        cp Menu.mm menu.mm 2>/dev/null || true
+
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
-        # الدخول للمسار الفعلي للمستودع مجدداً للتأكد من وجود الملفات والتجميع
-        cd $GITHUB_WORKSPACE
+        make clean
         make package FINALPACKAGE=1

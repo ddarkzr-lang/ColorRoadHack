@@ -7,23 +7,41 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Setup Theos Environment
-      uses: theos/setup-theos-action@v1
-
-    - name: Compile Tweak
+    - name: Install System Dependencies
       run: |
+        sudo apt-get update
+        sudo apt-get install -y fakeroot build-essential git perl libstorable-perl clang lld
+
+    - name: Clone Theos Official Repository
+      run: |
+        git clone --recursive https://github.com/theos/theos.git $HOME/theos
+        echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+
+    - name: Setup Linus Toolchain
+      run: |
+        mkdir -p $HOME/theos/toolchain
+        # تنزيل المترجم الرسمي مباشرة من مستودع ثقة ومستقر
+        wget https://github.com/kabiroberai/theos-toolchain-linux/releases/download/v1.1.0/toolchain-linux-arm64.tar.gz
+        tar -xf toolchain-linux-arm64.tar.gz -C $HOME/theos/toolchain/
+
+    - name: Download iOS SDK
+      run: |
+        git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
+
+    - name: Compile Dylib File
+      run: |
+        export THEOS=$HOME/theos
         make package FINALPACKAGE=1
 
-    - name: Upload Resulting Dylib
+    - name: Upload Finished Dylib
       uses: actions/upload-artifact@v4
       with:
         name: ColorRoadModMenu-Dylib
         path: |
           .theos/obj/*.dylib
-          packages/*.deb

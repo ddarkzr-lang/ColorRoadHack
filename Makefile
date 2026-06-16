@@ -1,35 +1,11 @@
-name: Build iOS Dylib
+TARGET := iphone:clang:latest:15.0
+ARCHS := arm64 arm64e
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+include $(THEOS)/makefiles/common.mk
 
-jobs:
-  build:
-    runs-on: macos-14
+TWEAK_NAME := ColorRoadModMenu
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
+ColorRoadModMenu_FILES := tweak.x menu.mm
+ColorRoadModMenu_CFLAGS := -fobjc-arc
 
-    - name: Setup Official Theos
-      run: |
-        git clone --recursive https://github.com/theos/theos.git $HOME/theos
-        echo "THEOS=$HOME/theos" >> $GITHUB_ENV
-
-    - name: Download iOS SDK
-      run: |
-        git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
-
-    - name: Diagnose File Locations
-      run: |
-        echo "=== Current Working Directory ==="
-        pwd
-        echo "=== Listing All Files Recursively ==="
-        ls -R
-
-    - name: Compile Dylib File
-      run: |
-        export THEOS=$HOME/theos
-        make package FINALPACKAGE=1
+include $(THEOS)/makefiles/tweak.mk

@@ -22,7 +22,21 @@ jobs:
       run: |
         git clone https://github.com/theos/sdks.git $HOME/theos/sdks || true
 
+    - name: Force Create Correct Files
+      run: |
+        # قراءة محتوى ملفاتك الأصلية وكتابتها في ملفات جديدة بالحروف التي يطلبها السيرفر غصب عنه
+        cat Tweak.x > tweak_temp.x 2>/dev/null || cat tweak.x > tweak_temp.x 2>/dev/null
+        cat Menu.mm > menu_temp.mm 2>/dev/null || cat menu.mm > menu_temp.mm 2>/dev/null
+        
+        # حظر القديم واستبداله بالصيغة الصارمة لـ Theos
+        rm -f Tweak.x tweak.x Menu.mm menu.mm
+        cp tweak_temp.x Tweak.x
+        cp tweak_temp.x tweak.x
+        cp menu_temp.mm Menu.mm
+        cp menu_temp.mm menu.mm
+
     - name: Compile Dylib File
       run: |
         export THEOS=$HOME/theos
+        make clean
         make package FINALPACKAGE=1
